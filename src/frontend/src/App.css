@@ -1,0 +1,21 @@
+.App {
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+}
+
+.sidemenu{
+  background-color: #202123;
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+}
+
+.mainbox{
+  background-color: #343541;
+  flex:1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
