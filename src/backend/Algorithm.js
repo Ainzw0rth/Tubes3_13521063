@@ -34,8 +34,8 @@ function standarizeQuestions(input) { // standarisasi input
 function findPattern(question) { // mencari pattern yang cocok untuk pertanyaan
     const mathExprRegex = /^(\d+|\([^\(\)]*\))(?:\s*[\+\-\*\/]\s*(\d+|\([^\(\)]*\)))*$/;
     const dateRegex = /^(0?[1-9]|1[012])\/(0?[1-9]|[12][0-9]|3[01])\/\d{4}$/;
-    const addRegex = /^(tambah)\s.+?\s(pertanyaan)$/;
-    const delRegex = /hapus pertanyaan/;
+    const addRegex = /(.*tambah\s*pertanyaan)\s*(.*?)\s*dengan\s*jawaban\s*(.*)/i;
+    const delRegex = /(.*hapus\s*pertanyaan)\s*(.*)/i;
 
     if (isItUnknown(question)) {
         return [question, pattern.UNKNOWN, null];
