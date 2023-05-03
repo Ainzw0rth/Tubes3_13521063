@@ -1,5 +1,3 @@
-const { error } = require("console");
-
 /* -------- REGEX SECTION -------- */
 const pattern = {
     MATH : "mathExp",
