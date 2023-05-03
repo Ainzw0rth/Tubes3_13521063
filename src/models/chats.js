@@ -3,12 +3,12 @@ const Schema = mongoose.Schema;
 // const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const chats = new Schema({
-    quest: {
+    message: {
         type: String,
         required: true
     },
-    respond: {
-        type: String,
+    is_bot_message: {
+        type: Boolean,
         required: true
     }
 },
