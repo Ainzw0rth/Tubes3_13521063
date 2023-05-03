@@ -1,6 +1,6 @@
 const express = require('express');
 const Knowledge = require('../models/knowledge');
-const { getAllKnowledge, getKnowledgeById, addKnowledge, updateKnowledgeById, deleteKnowledgeById, deleteByQuestion } = require('../query/knowQuery');
+const { getAllKnowledge, getKnowledgeById, getKnowledgeByQuestion, addKnowledge, updateKnowledgeById, deleteKnowledgeById, deleteByQuestion } = require('../query/knowQuery');
 
 const router = express.Router();
 
@@ -26,6 +26,19 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+// GET a single knowledge entry by Question
+router.get('/:id', async (req, res) => {
+    try {
+      const knowledge = await getKnowledgeByQuestion(req.params.question);
+      if (knowledge == null) {
+        return res.status(404).json({ message: 'Cannot find knowledge entry' });
+      }
+      res.send(knowledge);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  });
 
 // CREATE a new knowledge entry
 router.post('/', async (req, res) => {
