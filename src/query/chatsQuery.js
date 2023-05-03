@@ -27,12 +27,12 @@ async function getChatById(id) {
 }
 
 // buat fungsi untuk mendapatkan data chat berdasarkan pertanyaan
-async function getChatByQuestion(question) {
+async function getChatByMsg(msg) {
     const client = new MongoClient(uri, { useUnifiedTopology: true });
     await client.connect();
     const db = client.db(dbName);
     const collection = db.collection('chats');
-    const chat = await collection.findOne({ quest: question });
+    const chat = await collection.findOne({ message: msg });
     await client.close();
     return chat;
   }
@@ -63,7 +63,7 @@ async function deleteChatById(id) {
 module.exports = {
   getChats,
   getChatById,
-  getChatByQuestion,
+  getChatByMsg,
   addChat,
   deleteChatById
 };
