@@ -1,7 +1,16 @@
 const { MongoClient, ObjectId } = require('mongodb');
+const Knowledge = require('../models/knowledge');
+const mongoose = require('mongoose');
 
 const uri = 'mongodb+srv://13521063:ngechatgpt@chatbot.ynjyvpn.mongodb.net/chatbotweb';
-const dbName = 'Chatbot';
+const dbName = 'chatbotweb';
+
+async function connect() {
+    const client = new MongoClient(uri, { useUnifiedTopology: true });
+    await client.connect();
+    const db = client.db(dbName);
+    return db;
+}
 
 // fungsi untuk mengambil semua data knowledge
 async function getAllKnowledge() {
@@ -13,9 +22,16 @@ async function getAllKnowledge() {
 // fungsi untuk mengambil satu data knowledge berdasarkan id
 async function getKnowledgeById(id) {
   const db = await connect();
-  const knowledge = await db.collection('knowledges').findOne({ _id: ObjectId(id) });
+  const knowledge = await Knowledge.findById(new mongoose.Types.ObjectId(id));
   return knowledge;
 }
+
+// fungsi untuk mengambil satu data knowledge berdasarkan question
+async function getKnowledgeByQuestion(question) {
+    const db = await connect();
+    const knowledge = await db.collection('knowledges').findOne({ quest: question });
+    return knowledge;
+  }
 
 // fungsi untuk menambahkan data knowledge
 async function addKnowledge(newKnowledge) {
@@ -51,6 +67,7 @@ async function deleteByQuestion(question) {
 module.exports = {
     getAllKnowledge,
     getKnowledgeById,
+    getKnowledgeByQuestion,
     addKnowledge,
     updateKnowledgeById,
     deleteKnowledgeById,

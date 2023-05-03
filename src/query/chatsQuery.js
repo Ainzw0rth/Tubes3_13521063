@@ -2,7 +2,7 @@ const { MongoClient, ObjectId } = require('mongodb');
 
 // definisikan konfigurasi koneksi ke database
 const uri = 'mongodb+srv://13521063:ngechatgpt@chatbot.ynjyvpn.mongodb.net/chatbotweb';
-const dbName = 'Chatbot';
+const dbName = 'chatbotweb';
 
 // buat fungsi untuk mendapatkan data chats
 async function getChats() {
