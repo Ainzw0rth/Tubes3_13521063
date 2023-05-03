@@ -186,17 +186,17 @@ function bm(input, data) {
 function levenshtein(input, data) {
     const m = input.length;
     const n = data.length;
-    
+
     const dp = new Array(m + 1).fill(null).map(() => new Array(n + 1).fill(null));
-    
+
     for (let i = 0; i <= m; i++) {
         dp[i][0] = i;
     }
-    
+
     for (let j = 0; j <= n; j++) {
         dp[0][j] = j;
     }
-    
+
     for (let i = 1; i <= m; i++) {
         for (let j = 1; j <= n; j++) {
         if (input[i - 1] === data[j - 1][0]) {
@@ -206,7 +206,7 @@ function levenshtein(input, data) {
         }
         }
     }
-    
+
     return dp[m][n];
 }
 
@@ -226,18 +226,18 @@ function getDayFromDate(datestring) {
     const dateComponents = datestring.split('-');
     const standardizedDate = new Date(`${dateComponents[2]}-${dateComponents[1]}-${dateComponents[0]}`);
     const result = daysList[standardizedDate.getDay()];
-    
+
     return result;
 }
 
 function findResponses(input, KMP, data) {
     // nanti masukin proses ngambil daftar pertanyaan dan response dari query terus masukin ke data
     /* INSERT HERE */
-    
+
     const listOfQuestions = standarizeQuestions(input);
 
     let listOfResponses = [data.length];
-    
+
 
     for (let i = 0; i < listOfQuestions.length; i++) {
         let [exact, index] = [null, null];
@@ -284,3 +284,21 @@ function generateSolution(question, data) {
 
 let data = [["ques1", "solusi1"], ["ques2", "solusi2"], ["ques3", "solusi3"], ["ques4", "solusi4"]];
 findResponses("ques", true, data);
+
+module.exports = {
+    standarizeQuestions,
+    findPattern,
+    isItMath,
+    isItDate,
+    isItAdd,
+    isItDelete,
+    isItUnknown,
+    kmp,
+    computeBorder,
+    bm,
+    levenshtein,
+    properlyRoundCalculation,
+    getDayFromDate,
+    findResponses,
+    generateSolution
+}
