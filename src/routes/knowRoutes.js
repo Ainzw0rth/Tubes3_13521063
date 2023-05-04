@@ -1,6 +1,6 @@
 const express = require('express');
 const Knowledge = require('../models/knowledge');
-const { getAllKnowledge, getKnowledgeById, getKnowledgeByQuestion, addKnowledge, updateKnowledgeById, deleteKnowledgeById, deleteByQuestion } = require('../query/knowQuery');
+const { getAllKnowledge, getKnowledgeById, getKnowledgeByQuestion, addKnowledge, updateKnowledgeById, deleteKnowledgeById, deleteByQuestion, isQuestionExist } = require('../query/knowQuery');
 
 const router = express.Router();
 
@@ -88,6 +88,16 @@ router.delete('/:question', async (req, res) => {
     res.json({ message: `Deleted ${result.deletedCount} knowledge(s) with question "${req.params.question}"` });
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+});
+
+router.post('/', async (req, res) => {
+  const question = req.body.question;
+  const isExist = await isQuestionExist(question);
+  if (isExist) {
+    return res.status(400).json({ message: 'Question already exists' });
+  } else {
+    return res.status(404).json({ message: 'Question not found in database' });
   }
 });
 
