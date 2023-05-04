@@ -56,7 +56,31 @@ function findPattern(question) { // mencari pattern yang cocok untuk pertanyaan
     } else if (isItMath(question)) {
         return [question.replace(regex.mathExprRegex, "{math}"), pattern.MATH, question.match(regex.mathExprRegex)[0]];
     } else if (isItAdd(question)) {
-        return [question.replace(regex.addRegex, "{add}"), pattern.ADD, question.match(regex.addRegex)[0]];
+        let addelements = question.match(regex.addRegex)[0].split("dengan").map((element) => element.trim());
+        let pElements = addelements[0].split(" ").map((element) => element.trim());
+        let jElements = addelements[1].split(" ").map((element) => element.trim());
+
+        let pertanyaan = "";
+        // masukkan pertanyaan
+        for (let i = 2; i < pElements.length; i++) {
+            if (i != 2) {
+                pertanyaan = pertanyaan.concat(" ", pElements[i]);
+            } else {
+                pertanyaan = pertanyaan.concat(pElements[i]);
+            }
+        }
+
+        let jawaban = "";
+        // masukkan jawaban
+        for (let i = 1; i < jElements.length; i++) {
+            if (i != 1) {
+                jawaban = jawaban.concat(" ", jElements[i]);
+            } else {
+                jawaban = jawaban.concat(jElements[i]);
+            }
+        }
+
+        return [question.replace(regex.addRegex, "{add}"), pattern.ADD, [pertanyaan, jawaban]];
     } else {
         return [question.replace(regex.delRegex, "{del}"), pattern.DEL, question.match(regex.delRegex)[0]];
     }
@@ -283,10 +307,10 @@ function getDayFromDate(datestring) {
 
 /* -------- FINDING PROPER RESPONSES SECTION -------- */
 // fungsi untuk mencari pertanyaan yang exact match menggunakan kmp/bm
-function findResponses(input, KMP) {
+function findResponses(input, KMP, data) {
     // nanti masukin proses ngambil daftar pertanyaan dan response dari query terus masukin ke data
     /* INSERT HERE */
-    data = knowQuery.getAllKnowledge();
+    // data = knowQuery.getAllKnowledge();
 
     const listOfQuestions = standarizeQuestions(input);
     console.log("pertanyaan", listOfQuestions);
@@ -410,6 +434,6 @@ module.exports = {
     generateResponse
 }
 
-// /* TESTING PURPOSES */
-// let data = [["ques1", "solusi1"], ["ques2", "solusi2"], ["ques3", "solusi3"], ["ques4", "solusi4"], ["{date}", "hari "], ["{math}", "hasil "]];
-// findResponses("(1 - -1)*2?", true, data);
+/* TESTING PURPOSES */
+let data = [["ques1", "solusi1"], ["ques2", "solusi2"], ["ques3", "solusi3"], ["{add}", ""], ["{date}", "hari "], ["{math}", "hasil "]];
+findResponses("tambah pertanyaan x asda asda asdas  dengan jawaban y asd asd  asd  asd?", true, data);
