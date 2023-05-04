@@ -26,21 +26,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// GET a single chat by question
-router.get('/:quest', async (req, res) => {
-    try {
-      const chat = await getChatByMsg(req.params.quest );
-      if (chat == null) {
-        return res.status(404).json({ message: 'Cannot find chat' });
-      }
-      res.json(chat);
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
-});
-
 // GET all user messages
-router.get('/user-messages', async (req, res) => {
+router.get('/:user-message', async (req, res) => {
   try {
     const chats = await getUserMessages();
     res.json(chats);
@@ -50,9 +37,10 @@ router.get('/user-messages', async (req, res) => {
 });
 
 // GET all bot messages
-router.get('/bot-messages', async (req, res) => {
+router.get('/:bot-message', async (req, res) => {
   try {
     const chats = await getBotMessages();
+    console.log(chats);
     res.json(chats);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -62,8 +50,8 @@ router.get('/bot-messages', async (req, res) => {
 // POST a new chat
 router.post('/', async (req, res) => {
   const chat = new Chat({
-    quest: req.body.quest,
-    respond: req.body.respond
+    message: req.body.message,
+    is_bot_message: req.body.is_bot_message
   });
   try {
     const newChat = await addChat(chat);
@@ -87,14 +75,14 @@ router.delete('/:id', async (req, res) => {
 });
 
 // POST a new chat and get response from bot
-router.post('/respond', async (req, res) => {
-  try {
-    const question = req.body.question;
-    const response = await giveRespond(question);
-    res.status(200).json(response);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+// router.post('/', async (req, res) => {
+//   try {
+//     const question = req.body.question;
+//     const response = await giveRespond(question);
+//     res.status(200).json(response);
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// });
 
 module.exports = router;
