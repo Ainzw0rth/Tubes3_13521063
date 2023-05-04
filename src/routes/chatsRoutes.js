@@ -1,6 +1,6 @@
 const express = require('express');
 const Chat = require('../models/chats');
-const { getChats, getChatById, getChatByQuestion, addChat, deleteChatById } = require('../query/chatsQuery');
+const { getChats, getChatById, getChatByMsg, getUserMessages, getBotMessages, addChat, deleteChatById } = require('../query/chatsQuery');
 
 const router = express.Router();
 
@@ -30,7 +30,7 @@ router.get('/:id', async (req, res) => {
 // GET a single chat by question
 router.get('/:quest', async (req, res) => {
     try {
-      const chat = await getChatByQuestion(req.params.quest );
+      const chat = await getChatByMsg(req.params.quest );
       if (chat == null) {
         return res.status(404).json({ message: 'Cannot find chat' });
       }
@@ -38,7 +38,27 @@ router.get('/:quest', async (req, res) => {
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
-  });
+});
+
+// GET all user messages
+router.get('/user-messages', async (req, res) => {
+  try {
+    const chats = await getUserMessages();
+    res.json(chats);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// GET all bot messages
+router.get('/bot-messages', async (req, res) => {
+  try {
+    const chats = await getBotMessages();
+    res.json(chats);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
 // POST a new chat
 router.post('/', async (req, res) => {

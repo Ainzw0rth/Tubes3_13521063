@@ -13,7 +13,7 @@ async function getChats() {
   const chats = await collection.find().toArray();
   await client.close();
   return chats;
-}
+};
 
 // buat fungsi untuk mendapatkan data chat berdasarkan ID
 async function getChatById(id) {
@@ -24,7 +24,7 @@ async function getChatById(id) {
   const chat = await collection.findOne({ _id: ObjectId(id) });
   await client.close();
   return chat;
-}
+};
 
 // buat fungsi untuk mendapatkan data chat berdasarkan pertanyaan
 async function getChatByMsg(msg) {
@@ -35,7 +35,21 @@ async function getChatByMsg(msg) {
     const chat = await collection.findOne({ message: msg });
     await client.close();
     return chat;
-  }
+};
+
+// Mendapatkan semua chat yang bukan merupakan bot message
+async function getUserMessages() {
+  const db = await connect();
+  const chats = await db.collection('chats').find({ isBot: false }).toArray();
+  return chats;
+};
+
+// Mendapatkan semua bot message
+async function getBotMessages() {
+  const db = await connect();
+  const chats = await db.collection('chats').find({ isBot: true }).toArray();
+  return chats;
+};
 
 // buat fungsi untuk menambah data chat baru
 async function addChat(chat) {
@@ -46,7 +60,7 @@ async function addChat(chat) {
   const result = await collection.insertOne(chat);
   await client.close();
   return result;
-}
+};
 
 // buat fungsi untuk menghapus data chat berdasarkan ID
 async function deleteChatById(id) {
@@ -57,13 +71,15 @@ async function deleteChatById(id) {
   const result = await collection.deleteOne({ _id: ObjectId(id) });
   await client.close();
   return result;
-}
+};
 
 // ekspor semua fungsi yang telah dibuat
 module.exports = {
   getChats,
   getChatById,
   getChatByMsg,
+  getUserMessages,
+  getBotMessages,
   addChat,
   deleteChatById
 };
