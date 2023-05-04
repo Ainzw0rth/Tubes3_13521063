@@ -31,7 +31,7 @@ function standarizeQuestions(input) { // standarisasi input
     input = input.replace(/[^+*/\-'^()"?|\w\s]|_/g, ""); // tanda-tanda yang diperbolehkan: +, -, /, *, ^, ', ", ?, |
 
     /* MASUKKAN DAFTAR PERTANYAAN */
-    let listOfQuestions = chatsQuery.getUserMessages;
+    let listOfQuestions = [];
 
     /* PISAHKAN PERTANYAAN */
     const arrayOfQuestions = input.split("?").map((element) => element.trim()); // daftar pertanyaan
@@ -283,14 +283,15 @@ function getDayFromDate(datestring) {
 
 /* -------- FINDING PROPER RESPONSES SECTION -------- */
 // fungsi untuk mencari pertanyaan yang exact match menggunakan kmp/bm
-function findResponses(input, KMP, data) {
+function findResponses(input, KMP) {
     // nanti masukin proses ngambil daftar pertanyaan dan response dari query terus masukin ke data
     /* INSERT HERE */
+    data = knowQuery.getAllKnowledge();
 
     const listOfQuestions = standarizeQuestions(input);
     console.log("pertanyaan", listOfQuestions);
 
-    let listOfResponses = knowQuery.getAllKnowledge();
+    let listOfResponses = [];
 
     for (let i = 0; i < listOfQuestions.length; i++) {
         let [exact, index] = [null, null];
