@@ -71,6 +71,26 @@ async function isQuestionExist(question) {
   return knowledge !== null;
 };
 
+// fungsi untuk mendapatkan semua question dari collection knowledge
+async function getAllQuestions() {
+  const db = await connect();
+  const questions = await db.collection('knowledges').distinct('question');
+  return questions;
+};
+
+// fungsi untuk mendapatkan semua answer dari collection knowledge
+async function getAllAnswers() {
+  const db = await connect();
+  const answers = await db.collection('knowledges').distinct('answer');
+  return answers;
+};
+
+async function getQuestionAndAnswer() {
+  const db = await connect();
+  const result = await db.collection('knowledges').find({}, { projection: { _id: 0, question: 1, answer: 1 } }).toArray();
+  return result.map(({ question, answer }) => [question, answer]);
+}
+
 module.exports = {
     getAllKnowledge,
     getKnowledgeById,
@@ -79,5 +99,8 @@ module.exports = {
     updateKnowledgeByQuestion,
     deleteKnowledgeById,
     deleteByQuestion,
-    isQuestionExist
+    isQuestionExist,
+    getAllQuestions,
+    getAllAnswers,
+    getQuestionAndAnswer
 };

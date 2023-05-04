@@ -1,6 +1,8 @@
 const express = require('express');
 const Knowledge = require('../models/knowledge');
-const { getAllKnowledge, getKnowledgeById, getKnowledgeByQuestion, addKnowledge, updateKnowledgeByQuestion, deleteKnowledgeById, deleteByQuestion, isQuestionExist } = require('../query/knowQuery');
+const { getAllKnowledge, getKnowledgeById, getKnowledgeByQuestion, addKnowledge, updateKnowledgeByQuestion, deleteKnowledgeById, deleteByQuestion, isQuestionExist, getAllQuestions,
+  getAllAnswers,
+  getQuestionAndAnswer } = require('../query/knowQuery');
 
 const router = express.Router();
 
@@ -98,6 +100,36 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ message: 'Question already exists' });
   } else {
     return res.status(404).json({ message: 'Question not found in database' });
+  }
+});
+
+// GET all question
+router.get('/', async (req, res) => {
+  try {
+    const questions = await getAllQuestions();
+    res.send(questions);
+  } catch (err) {
+  res.status(500).json({ message: err.message });
+  }
+});
+
+// GET all knowledge answers
+router.get('/', async (req, res) => {
+  try {
+    const answers = await getAllAnswers();
+    res.send(answers);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// GET data (question and answer)
+router.get('/', async (req, res) => {
+  try {
+    const data = await getQuestionAndAnswer();
+    res.send(data);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 
