@@ -283,10 +283,10 @@ function getDayFromDate(datestring) {
 
 /* -------- FINDING PROPER RESPONSES SECTION -------- */
 // fungsi untuk mencari pertanyaan yang exact match menggunakan kmp/bm
-function findResponses(input, KMP) {
+async function findResponses(input, KMP) {
     // nanti masukin proses ngambil daftar pertanyaan dan response dari query terus masukin ke data
     /* INSERT HERE */
-    data = knowQuery.getAllKnowledge();
+    let data = await knowQuery.getQuestionAndAnswer();
 
     const listOfQuestions = standarizeQuestions(input);
     console.log("pertanyaan", listOfQuestions);
@@ -345,7 +345,7 @@ function findClosestSolution(question, data) {
 }
 
 // fungsi untuk melakukan kalkulasi untuk pertanyaan seperti kalkulator, tanggal, dll
-function generateResponse(question, data, idx) {
+async function generateResponse(question, data, idx) {
     let solutions = "";
     if (question[1] == pattern.MATH) {
         if (calculate(question[2]) == calculationError.mathError) {
@@ -364,19 +364,19 @@ function generateResponse(question, data, idx) {
     } else if (question[1] == pattern.ADD) {
         // // TODO: query masuk database
         if (knowQuery.isQuestionExist(question[1])) {
-            knowQuery.updateKnowledgeByQuestion(question[1], solutions);
+            await knowQuery.updateKnowledgeByQuestion(question[1], solutions);
         } else {
             const newKnowledge = new Knowledge({
                 question: question[1],
                 answer: solutions
             });
-            knowQuery.addKnowledge(newKnowledge)
+            await knowQuery.addKnowledge(newKnowledge)
         }
         solutions = 1; // sementara
     } else if (question[1] == pattern.DEL) {
         // // TODO: query delete dari database
         if (knowQuery.isQuestionExist(question[1])) {
-            knowQuery.deleteByQuestion(question[1]);
+            await knowQuery.deleteByQuestion(question[1]);
         } else {
             solutions = solutions.concat("Tidak ada pertanyaan tersebut di database");
         }
@@ -412,4 +412,4 @@ module.exports = {
 
 // /* TESTING PURPOSES */
 // let data = [["ques1", "solusi1"], ["ques2", "solusi2"], ["ques3", "solusi3"], ["ques4", "solusi4"], ["{date}", "hari "], ["{math}", "hasil "]];
-// findResponses("(1 - -1)*2?", true, data);
+findResponses("(1 - -1)*2?", true);
