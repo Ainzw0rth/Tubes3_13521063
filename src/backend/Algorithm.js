@@ -315,7 +315,7 @@ async function findResponses(input, KMP) {
         }
     }
 
-    console.log(listOfResponses);
+    const result = listOfResponses.flat().join(' ');
 }
 
 // fungsi untuk mencari pertanyaan ketika tidak ada yang exact match
