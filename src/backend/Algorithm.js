@@ -25,7 +25,7 @@ function standarizeQuestions(input) { // standarisasi input
     input = input.toLowerCase();
 
     // hapus space berlebihan di input
-    input = input.trim();
+    input = input.replace(/\s+/g, ' ');
 
     // ganti tanda-tanda spesial
     input = input.replace(/[^+*/\-'^()"?|\w\s]|_/g, ""); // tanda-tanda yang diperbolehkan: +, -, /, *, ^, ', ", ?, |
@@ -56,7 +56,7 @@ function findPattern(question) { // mencari pattern yang cocok untuk pertanyaan
     } else if (isItMath(question)) {
         return [question.replace(regex.mathExprRegex, "{math}"), pattern.MATH, question.match(regex.mathExprRegex)[0]];
     } else if (isItAdd(question)) {
-        let addelements = question.match(regex.addRegex)[0].split("dengan").map((element) => element.trim());
+        let addelements = question.match(regex.addRegex)[0].split(/\sdengan\s(.*)/s).map((element) => element.trim());
         let pElements = addelements[0].split(" ").map((element) => element.trim());
         let jElements = addelements[1].split(" ").map((element) => element.trim());
 
@@ -80,9 +80,14 @@ function findPattern(question) { // mencari pattern yang cocok untuk pertanyaan
             }
         }
 
-        return [question.replace(regex.addRegex, "{add}"), pattern.ADD, [pertanyaan, jawaban]];
+        return [question.replace(regex.addRegex, "{add}"), pattern.ADD, [pertanyaan.replace(/\s+/g, ' '), jawaban.replace(/\s+/g, ' ')]];
     } else {
-        return [question.replace(regex.delRegex, "{del}"), pattern.DEL, question.match(regex.delRegex)[0]];
+        // handle jika terdapat input seperti "hapus pertanyaan apakah hapus pertanyaan termasuk perintah?"
+        // batasan: seluruh string setelah hapus pertanyaan pertama adalah pertanyaan
+        let delElements = question.match(regex.delRegex)[0].split(/hapus\spertanyaan\s(.*)/s);
+        let pertanyaan = delElements[1];
+
+        return [question.replace(regex.delRegex, "{del}"), pattern.DEL, pertanyaan.replace(/\s+/g, ' ')];
     }
 }
 
@@ -307,13 +312,13 @@ function getDayFromDate(datestring) {
 
 /* -------- FINDING PROPER RESPONSES SECTION -------- */
 // fungsi untuk mencari pertanyaan yang exact match menggunakan kmp/bm
-function findResponses(input, KMP, data) {
+function findResponses(input, KMP) {
     // nanti masukin proses ngambil daftar pertanyaan dan response dari query terus masukin ke data
     /* INSERT HERE */
-    // data = knowQuery.getAllKnowledge();
+    let data = knowQuery.getQuestionAndAnswer();
+    console.log(data);
 
     const listOfQuestions = standarizeQuestions(input);
-    console.log("pertanyaan", listOfQuestions);
 
     let listOfResponses = [];
 
@@ -386,23 +391,28 @@ function generateResponse(question, data, idx) {
             solutions = solutions.concat(getDayFromDate(question[2]));
         }
     } else if (question[1] == pattern.ADD) {
-        // // TODO: query masuk database
-        if (knowQuery.isQuestionExist(question[1])) {
-            knowQuery.updateKnowledgeByQuestion(question[1], solutions);
+        if (question[2][0].trim() == "" || question[2][1].trim() == "") {
+            solutions = solutions.concat("pertanyaan atau jawaban tidak boleh kosong");
+        } else if (knowQuery.isQuestionExist(question[2][0])) {
+            knowQuery.updateKnowledgeByQuestion(question[2][0], question[2][1]);
+            solutions = solutions.concat("pertanyaan ", question[2][0], " sudah ada! jawaban diupdate menjadi ", question[2][1]);
         } else {
             const newKnowledge = new Knowledge({
                 question: question[1],
                 answer: solutions
             });
-            knowQuery.addKnowledge(newKnowledge)
+            knowQuery.addKnowledge(newKnowledge);
+
+            solutions = solutions.concat("pertanyaan ", question[2][0], " telah ditambah");
         }
-        solutions = 1; // sementara
     } else if (question[1] == pattern.DEL) {
-        // // TODO: query delete dari database
-        if (knowQuery.isQuestionExist(question[1])) {
-            knowQuery.deleteByQuestion(question[1]);
+        if (question[2].trim() == "") {
+            solutions = solutions.concat("pertanyaan tidak boleh kosong");
+        } else if (knowQuery.isQuestionExist(question[2])) {
+            knowQuery.deleteByQuestion(question[2]);
+            solutions = solutions.concat("pertanyaan ", question[2], " telah dihapus");
         } else {
-            solutions = solutions.concat("Tidak ada pertanyaan tersebut di database");
+            solutions = solutions.concat("Tidak ada pertanyaan ", question[2], " di database");
         }
         solutions = 2; // sementara
     } else {
@@ -435,5 +445,5 @@ module.exports = {
 }
 
 /* TESTING PURPOSES */
-let data = [["ques1", "solusi1"], ["ques2", "solusi2"], ["ques3", "solusi3"], ["{add}", ""], ["{date}", "hari "], ["{math}", "hasil "]];
-findResponses("tambah pertanyaan x asda asda asdas  dengan jawaban y asd asd  asd  asd?", true, data);
+// let data = [["ques1", "solusi1"], ["ques2", "solusi2"], ["ques3", "solusi3"], ["{add}", ""], ["{date}", "hari "], ["{math}", "hasil "]];
+findResponses("hapus pertanyaan x?", true);
