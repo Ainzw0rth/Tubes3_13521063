@@ -1,7 +1,6 @@
 const express = require('express');
 const Chat = require('../models/chats');
 const { getChats, getChatById, getChatByMsg, getUserMessages, getBotMessages, addChat, deleteChatById } = require('../query/chatsQuery');
-
 const router = express.Router();
 
 // GET all chats
@@ -82,6 +81,17 @@ router.delete('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Cannot find chat' });
     }
     res.json({ message: 'Deleted chat' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// POST a new chat and get response from bot
+router.post('/respond', async (req, res) => {
+  try {
+    const question = req.body.question;
+    const response = await giveRespond(question);
+    res.status(200).json(response);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
