@@ -40,14 +40,14 @@ async function getChatByMsg(msg) {
 // Mendapatkan semua chat yang bukan merupakan bot message
 async function getUserMessages() {
   const db = await connect();
-  const chats = await db.collection('chats').find({ isBot: false }).toArray();
+  const chats = await db.collection('chats').find({ is_bot_message: false }).toArray();
   return chats;
 };
 
 // Mendapatkan semua bot message
 async function getBotMessages() {
   const db = await connect();
-  const chats = await db.collection('chats').find({ isBot: true }).toArray();
+  const chats = await db.collection('chats').find({ is_bot_message: true }).toArray();
   return chats;
 };
 
