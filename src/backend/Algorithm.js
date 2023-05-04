@@ -1,3 +1,8 @@
+const knowQuery = require('../query/knowQuery');
+const chatsQuery = require('../query/chatsQuery');
+const Chat = require('../models/chats');
+const Knowledge = require('../models/knowledge');
+
 /* -------- REGEX SECTION -------- */
 const pattern = {
     MATH : "mathExp",
@@ -26,7 +31,7 @@ function standarizeQuestions(input) { // standarisasi input
     input = input.replace(/[^+*/\-'^()"?|\w\s]|_/g, ""); // tanda-tanda yang diperbolehkan: +, -, /, *, ^, ', ", ?, |
 
     /* MASUKKAN DAFTAR PERTANYAAN */
-    let listOfQuestions = [];
+    let listOfQuestions = chatsQuery.getUserMessages;
 
     /* PISAHKAN PERTANYAAN */
     const arrayOfQuestions = input.split("?").map((element) => element.trim()); // daftar pertanyaan
@@ -99,7 +104,7 @@ function isItUnknown(question) {
 /* -------- KMP SECTION -------- */
 function kmp(input, data) {
     let inputLength = input.length;
-    
+
     let k = 0;
     let found = false;
     let foundidx = null;
@@ -111,17 +116,17 @@ function kmp(input, data) {
             k++;
         } else {
             let b = computeBorder(input);
-    
+
             let i = 0;
             let j = 0;
-    
+
             while (i < dataLength) {
                 if (input[j] == data[k][0][i]) {
                     if (j == inputLength - 1) {
                         found = true;
                         foundidx = k;
                     }
-    
+
                     i++;
                     j++;
                 } else if (j > 0) {
@@ -285,7 +290,7 @@ function findResponses(input, KMP, data) {
     const listOfQuestions = standarizeQuestions(input);
     console.log("pertanyaan", listOfQuestions);
 
-    let listOfResponses = [];
+    let listOfResponses = knowQuery.getAllKnowledge();
 
     for (let i = 0; i < listOfQuestions.length; i++) {
         let [exact, index] = [null, null];
@@ -296,7 +301,7 @@ function findResponses(input, KMP, data) {
         }
 
         if (exact) {
-            listOfResponses[i] = generateResponse(listOfQuestions[i], data, index); // ambil response dari hasil query dan masukkan ke daftar respons            
+            listOfResponses[i] = generateResponse(listOfQuestions[i], data, index); // ambil response dari hasil query dan masukkan ke daftar respons
         } else {
             listOfResponses[i] = null;
         }
@@ -357,19 +362,23 @@ function generateResponse(question, data, idx) {
         }
     } else if (question[1] == pattern.ADD) {
         // // TODO: query masuk database
-        // if (exists) {
-        //     // update
-        // } else {
-        //     // insert
-        // }
+        if (knowQuery.isQuestionExist(question[1])) {
+            knowQuery.updateKnowledgeByQuestion(question[1], solutions);
+        } else {
+            const newKnowledge = new Knowledge({
+                question: question[1],
+                answer: solutions
+            });
+            knowQuery.addKnowledge(newKnowledge)
+        }
         solutions = 1; // sementara
     } else if (question[1] == pattern.DEL) {
         // // TODO: query delete dari database
-        // if (exists) {
-        //     // delete
-        // } else {
-        //     solutions = solutions.concat("Tidak ada pertanyaan tersebut di database");
-        // }
+        if (knowQuery.isQuestionExist(question[1])) {
+            knowQuery.deleteByQuestion(question[1]);
+        } else {
+            solutions = solutions.concat("Tidak ada pertanyaan tersebut di database");
+        }
         solutions = 2; // sementara
     } else {
         solutions = solutions.concat(data[idx][1]);
