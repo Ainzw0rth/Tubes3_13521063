@@ -29,7 +29,7 @@ async function getKnowledgeById(id) {
 // fungsi untuk mengambil satu data knowledge berdasarkan question
 async function getKnowledgeByQuestion(question) {
     const db = await connect();
-    const knowledge = await db.collection('knowledges').findOne({ quest: question });
+    const knowledge = await db.collection('knowledges').findOne({ question: question });
     return knowledge;
 };
 
@@ -40,12 +40,13 @@ async function addKnowledge(newKnowledge) {
   return result.insertedId;
 };
 
-// fungsi untuk mengupdate data knowledge berdasarkan id
-async function updateKnowledgeById(id, updatedKnowledge) {
+// fungsi untuk mengupdate data knowledge berdasarkan question
+async function updateKnowledgeByQuestion(question, updatedAnswer) {
   const db = await connect();
-  const result = await db.collection('knowledges').updateOne({ _id: ObjectId(id) }, { $set: updatedKnowledge });
+  const result = await db.collection('knowledges').updateOne({ question: question }, { $set: { answer: updatedAnswer } });
   return result.modifiedCount;
 };
+
 
 // fungsi untuk menghapus data knowledge berdasarkan id
 async function deleteKnowledgeById(id) {
@@ -66,7 +67,7 @@ async function deleteByQuestion(question) {
 
 async function isQuestionExist(question) {
   const db = await connect();
-  const knowledge = await db.collection('knowledges').findOne({ quest: question });
+  const knowledge = await db.collection('knowledges').findOne({ question: question });
   return knowledge !== null;
 };
 
@@ -75,7 +76,7 @@ module.exports = {
     getKnowledgeById,
     getKnowledgeByQuestion,
     addKnowledge,
-    updateKnowledgeById,
+    updateKnowledgeByQuestion,
     deleteKnowledgeById,
     deleteByQuestion,
     isQuestionExist

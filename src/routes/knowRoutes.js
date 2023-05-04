@@ -1,6 +1,6 @@
 const express = require('express');
 const Knowledge = require('../models/knowledge');
-const { getAllKnowledge, getKnowledgeById, getKnowledgeByQuestion, addKnowledge, updateKnowledgeById, deleteKnowledgeById, deleteByQuestion, isQuestionExist } = require('../query/knowQuery');
+const { getAllKnowledge, getKnowledgeById, getKnowledgeByQuestion, addKnowledge, updateKnowledgeByQuestion, deleteKnowledgeById, deleteByQuestion, isQuestionExist } = require('../query/knowQuery');
 
 const router = express.Router();
 
@@ -28,7 +28,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // GET a single knowledge entry by Question
-router.get('/:id', async (req, res) => {
+router.get('/:question', async (req, res) => {
     try {
       const knowledge = await getKnowledgeByQuestion(req.params.question);
       if (knowledge == null) {
@@ -56,9 +56,9 @@ router.post('/', async (req, res) => {
 });
 
 // UPDATE a knowledge entry
-router.patch('/:id', async (req, res) => {
+router.patch('/:question', async (req, res) => {
   try {
-    const updatedKnowledge = await updateKnowledgeById(req.params.id, req.body);
+    const updatedKnowledge = await updateKnowledgeByQuestion(req.params.question, req.params.answer);
     res.json(updatedKnowledge);
   } catch (err) {
     res.status(400).json({ message: err.message });
