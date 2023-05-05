@@ -1,7 +1,7 @@
-// const knowQuery = require('../query/knowQuery');
-// const chatsQuery = require('../query/chatsQuery');
-// const Chat = require('../models/chats');
-// const Knowledge = require('../models/knowledge');
+const knowQuery = require('../query/knowQuery');
+const chatsQuery = require('../query/chatsQuery');
+const Chat = require('../models/chats');
+const Knowledge = require('../models/knowledge');
 
 /* -------- REGEX SECTION -------- */
 const pattern = {
