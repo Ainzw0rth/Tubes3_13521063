@@ -54,9 +54,10 @@ router.delete('/:id', async (req, res) => {
 });
 
 // POST a new chat and get response from bot
-router.post('/answer', async (req, res) => {
+router.post('/answer', async (req, res, next) => {
   try {
-    const response = await giveRespond(req.body.message);
+    const KMP = req.body.useKMP || false;
+    const response = await giveRespond(req.body.message, KMP);
 
     const newChat = new Chat({
       message: req.body.message,

@@ -63,12 +63,12 @@ async function deleteChatById(id) {
   return result;
 };
 
-async function giveRespond(question) {
+async function giveRespond(question, KMP) {
   const client = new MongoClient(uri, { useUnifiedTopology: true });
   await client.connect();
   const db = client.db(dbName);
   const collection = db.collection('chats');
-  const respond = await algo.findResponses(question);
+  const respond = await algo.findResponses(question, KMP);
   await client.close();
   return respond;
 };
