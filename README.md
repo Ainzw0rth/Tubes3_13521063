@@ -26,6 +26,7 @@ The Application of String Matching and Regular Expression in Creating a Simple C
 ## Project Structure
     Tubes3_13521063/
     ├───doc/
+    │   ├── Tubes3_K01_13521063_SaulGoodBot.pdf    
     ├───src/
     │   ├── backend/
     │   │   ├── Algorithm.hs
