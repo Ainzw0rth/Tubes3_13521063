@@ -21,7 +21,7 @@ app.use(express.json());
 
 // add the Routes to the app
 app.use('/chats', chatsRoutes);
-app.use('/knowledges', knowRoutes);
+app.use('/knowledge', knowRoutes);
 
 // connect to database (MongoDB)
 const dbURI = 'mongodb+srv://13521063:ngechatgpt@chatbot.ynjyvpn.mongodb.net/chatbotweb';
