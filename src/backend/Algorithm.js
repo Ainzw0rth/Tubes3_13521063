@@ -413,6 +413,7 @@ async function generateResponse(question, data, idx) {
         // // TODO: query delete dari database
         if (await knowQuery.isQuestionExist(question[2])) {
             await knowQuery.deleteByQuestion(question[2]);
+            solutions = solutions.concat("Pertanyaan ", question[2], " telah dihapus");
         } else {
             solutions = solutions.concat("Tidak ada pertanyaan ", question[2], " di database");
         }
