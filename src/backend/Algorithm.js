@@ -337,7 +337,7 @@ async function findResponses(input, KMP) {
         }
 
         if (exact) {
-            listOfResponses[i] = generateResponse(listOfQuestions[i], data, index); // ambil response dari hasil query dan masukkan ke daftar respons
+            listOfResponses[i] = await generateResponse(listOfQuestions[i], data, index); // ambil response dari hasil query dan masukkan ke daftar respons
         } else {
             listOfResponses[i] = null;
         }
@@ -346,15 +346,16 @@ async function findResponses(input, KMP) {
     // berikan solusi
     for (let i = 0; i < listOfResponses.length; i++) {
         if (listOfResponses[i] == null) {
-            listOfResponses[i] = findClosestSolution(listOfQuestions[i], data);
+            listOfResponses[i] = await findClosestSolution(listOfQuestions[i], data);
         }
     }
 
     const result = listOfResponses.flat().join(' ');
+    return result;
 }
 
 // fungsi untuk mencari pertanyaan ketika tidak ada yang exact match
-function findClosestSolution(question, data) {
+async function findClosestSolution(question, data) {
     let rank = [];
 
     for (let i = 0; i < data.length; i++) {
@@ -365,7 +366,7 @@ function findClosestSolution(question, data) {
 
     // cek apakah ada yang mirip > 90%
     if (rank[0][1] >= 0.9) {
-        return generateResponse(question, data, rank[0][0]); // generate response untuk pertanyaan yang >= 90% mirip
+        return await generateResponse(question, data, rank[0][0]); // generate response untuk pertanyaan yang >= 90% mirip
     } else {
         // generate 3 pertanyaan termirip
         let solutions = "Pertanyaan tidak ditemukan di database.\nBerikut pertanyaan yang mirip:\n";

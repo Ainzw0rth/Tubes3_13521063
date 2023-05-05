@@ -22,7 +22,7 @@ async function getAllKnowledge() {
 // fungsi untuk mengambil satu data knowledge berdasarkan id
 async function getKnowledgeById(id) {
   const db = await connect();
-  const knowledge = await Knowledge.findById(new mongoose.Types.ObjectId(id));
+  const knowledge = await Knowledge.findOne({_id: new mongoose.Types.ObjectId(id)});
   return knowledge;
 };
 
@@ -51,13 +51,13 @@ async function updateKnowledgeByQuestion(question, updatedAnswer) {
 // fungsi untuk menghapus data knowledge berdasarkan id
 async function deleteKnowledgeById(id) {
   const db = await connect();
-  const result = await db.collection('knowledges').deleteOne({ _id: ObjectId(id) });
+  const result = await db.collection('knowledges').deleteOne({ _id: new ObjectId(id) });
   return result.deletedCount;
 };
 
 async function deleteByQuestion(question) {
     try {
-      const result = await Knowledge.deleteOne({ question });
+      const result = await Knowledge.deleteOne({ question: question });
       console.log(`Deleted ${result.deletedCount} knowledge(s) with question "${question}"`);
       return result.deletedCount;
     } catch (error) {
