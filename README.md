@@ -25,6 +25,7 @@ The Application of String Matching and Regular Expression in Creating a Simple C
 
 ## Project Structure
     Tubes3_13521063/
+    ├───doc/
     ├───src/
     │   ├── backend/
     │   │   ├── Algorithm.hs
