@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import "./Mainbox.css";
+import axios from "axios";
 
 export const Mainbox = ({
   messages,
@@ -14,11 +15,22 @@ export const Mainbox = ({
     setCurrentMessage(event.target.value);
   }
 
-  function handleFormSubmit(event) {
+  async function handleFormSubmit(event) {
     event.preventDefault();
     if (currentMessage !== "") {
       setMessages([...messages, currentMessage]);
     }
+    console.log(currentMessage);
+    axios
+      .post("http://localhost:4000/chats/answer", { message: currentMessage })
+      .then((response) => {
+        console.log(response.data);
+        // Lakukan sesuatu dengan data response
+      })
+      .catch((error) => {
+        console.error(error);
+        // Lakukan sesuatu dengan error
+      });
   }
 
   const currentChat = previousChat.filter(

@@ -11,7 +11,7 @@
     flex-grow: 1;
     list-style: none;
     padding-left: 0;
-    max-height: fit-content;
+    /* max-height: fit-content; */
     overflow: auto;
   }
   
