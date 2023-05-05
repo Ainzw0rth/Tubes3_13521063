@@ -8,12 +8,10 @@
 * [Setup](#setup)
 * [Project Status](#project-status)
 * [Who made it?](#who-made-it)
-<!-- * [License](#license) -->
 
 
 ## General Information
 The Application of String Matching and Regular Expression in Creating a Simple ChatGPT.
-<!-- You don't have to answer all the questions - just the ones relevant to your project. -->
 
 
 ## Technologies Used
@@ -26,7 +24,7 @@ The Application of String Matching and Regular Expression in Creating a Simple C
 ## Project Structure
     Tubes3_13521063/
     ├───doc/
-    │   ├── Tubes3_K01_13521063_SaulGoodBot.pdf    
+    │   └── Tubes3_K01_13521063_SaulGoodBot.pdf    
     ├───src/
     │   ├── backend/
     │   │   ├── Algorithm.hs
@@ -62,7 +60,7 @@ The Application of String Matching and Regular Expression in Creating a Simple C
     ├── .gitignore
     ├── package.json
     ├── package-lock.json
-    ├── README.md
+    └── README.md
 
 ## Setup
 For setting up this web application, you will need to run the server then run the website
