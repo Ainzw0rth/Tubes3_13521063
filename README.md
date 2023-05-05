@@ -76,6 +76,12 @@ For setting up this web application, you will need to run the server then run th
 4. Your website will be run at `localhost:3000`!
 
 
+## Features
+Do this command on the website.
+1. To add question and answer from database, `tambah pertanyaan <your question> dengan jawaban <your answer>`. You can overwrite answer for a question too.
+2. To delete question and answer from database, `hapus pertanyaan <your question>`.
+
+
 ## Project Status
 Project is: _complete_
 
