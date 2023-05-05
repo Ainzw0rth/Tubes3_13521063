@@ -10,21 +10,34 @@ export const Mainbox = ({
   previousChat,
   currentChatTitle,
   emptyForm,
+  setResponse,
 }) => {
   function handleInputChange(event) {
     setCurrentMessage(event.target.value);
   }
 
+  function userInput(){
+    return (
+      <li>
+        <div>
+          <p>{currentMessage}</p>
+        </div>
+      </li>
+    )
+  }
+
   async function handleFormSubmit(event) {
     event.preventDefault();
-    if (currentMessage !== "") {
-      setMessages([...messages, currentMessage]);
-    }
+    userInput();
+    // if (currentMessage !== "") {
+    //   setMessages([...messages, currentMessage]);
+    // }
     console.log(currentMessage);
     axios
       .post("http://localhost:4000/chats/answer", { message: currentMessage })
       .then((response) => {
         console.log(response.data);
+        setMessages(response.data);
         // Lakukan sesuatu dengan data response
       })
       .catch((error) => {
@@ -51,7 +64,8 @@ export const Mainbox = ({
   return (
     <section className="main">
       <ul className="chat" ref={ref}>
-        {currentChat?.map((message, index) => (
+
+        {currentChat.map((message, index) => (
           <li key={index} className={message.role}>
             <div className="chat-container">
               <p>{message.value}</p>

@@ -8,6 +8,7 @@ function App() {
   const [currentMessage, setCurrentMessage] = useState("");
   const [previousChat, setPreviousChat] = useState([]);
   const [currentChatTitle, setCurrentChatTitle] = useState(null);
+  const [response, setResponse] = useState("");
 
   const emptyForm = useRef(null);
 
@@ -32,7 +33,7 @@ function App() {
         {
           title: currentChatTitle,
           role: messages.role,
-          value: messages.content,
+          value: messages,
         },
       ]);
     }
@@ -54,6 +55,7 @@ function App() {
         previousChat={previousChat}
         currentChatTitle={currentChatTitle}
         emptyForm={emptyForm}
+        setResponse={setResponse}
       />
     </div>
   );
