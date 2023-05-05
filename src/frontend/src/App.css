@@ -27,3 +27,185 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+/* Sidebar*/
+.sidebar {
+  background-color: #202123;
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  /* align-items: center; */
+}
+
+.newchat {
+  /* background-color: #fff; */
+  text-align: left;
+  font-size: 15px;
+  border-radius: 10px;
+  height: 50px;
+  margin: 10px;
+  border: 1px solid white;
+  background-color: #202123;
+  color: white;
+}
+
+.newchat:hover {
+  background-color: gray;
+  opacity: 0.7;
+}
+
+.historylist {
+  flex-grow: 1;
+  list-style: none;
+  padding-left: 0;
+  text-align: center;
+}
+
+.historylist li {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  margin: 20px;
+  height: 44px;
+  border-radius: 10px;
+  overflow: hidden;
+  text-align: left;
+  /* background: #000; */
+}
+
+.historylist li:hover {
+  background-color: gray;
+  opacity: 0.7;
+}
+
+.historylist div{
+  word-break: break-all;
+  width: 192px;
+  height: 20px;
+  overflow: hidden;
+  position: relative;
+  backdrop-filter: blur(10px);
+}
+
+.historylist p{
+  position: absolute; /* position the text absolutely within the container */
+  text-overflow: ellipsis;
+  backdrop-filter: blur(10px);
+top: 0;
+left: 0;
+width: 100%; /* set the width to 100% so that it fills the container */
+backdrop-filter: blur(5px); /* apply the backdrop filter with the desired blur value */
+color: white;
+}
+
+.algorithm-button {
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center ;
+}
+
+.kmpbutton {
+  height: 30px;
+  margin: 10px;
+  border-radius: 10px;
+  color: white;
+  background-color: #202123;
+}
+
+.bmbutton {
+  height: 30px;
+  margin: 10px;
+  border-radius: 10px;
+  color: white;
+  background-color: #202123;
+}
+
+/* Mainbox */
+.main {
+  background-color: #343541;
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.chat {
+  flex-grow: 1;
+  list-style: none;
+  padding-left: 0;
+  /* max-height: fit-content; */
+  overflow: auto;
+}
+
+.chat li {
+  color: white;
+  display: flex;
+  border: #343541 solid 1px;
+  background-color: #444654;
+  /* padding: 5px; */
+  justify-content: center;
+}
+
+.chat li.user{
+  background-color: #343541;
+}
+
+.chat-container{
+  padding-left: 5px;
+  width: 50%;
+  text-align: left;
+}
+
+.input {
+  margin-bottom: 10px;
+  height: 60px;
+  display: flex;
+  position: relative;
+  justify-content: center;
+  text-align: center;
+  padding-bottom: 20px;
+}
+
+.input-container {
+  /* background-color: red; */
+  background-color: black;
+  /* align-items: center; */
+  width: 50%;
+  height: 75%;
+  margin: 10px;
+  display: flex;
+  flex-direction: row;
+}
+
+.prompt {
+  background-color: black;
+  width: 100%;
+}
+
+.prompt input {
+  background-color: color(srgb 0.251 0.2536 0.3105);
+  height: 100%;
+  width: 100%;
+  border-radius: 5px;
+  color: white;
+}
+
+.image-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10em;
+  padding-right: 10px;
+}
+
+.imagelogo{
+  width: 30px;
+  height: 30px;
+  border: 1px solid black;
+  margin: auto;
+  margin-top: 10px;
+}
