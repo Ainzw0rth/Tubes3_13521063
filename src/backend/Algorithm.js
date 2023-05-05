@@ -1,7 +1,7 @@
-const knowQuery = require('../query/knowQuery');
-const chatsQuery = require('../query/chatsQuery');
-const Chat = require('../models/chats');
-const Knowledge = require('../models/knowledge');
+// const knowQuery = require('../query/knowQuery');
+// const chatsQuery = require('../query/chatsQuery');
+// const Chat = require('../models/chats');
+// const Knowledge = require('../models/knowledge');
 
 /* -------- REGEX SECTION -------- */
 const pattern = {
@@ -13,8 +13,8 @@ const pattern = {
 }
 
 const regex = {
-    mathExprRegex : /([^0-9/*()^+-]*)(?=(?:\D*\d){2}(?:\D*[+\-*/^]){1})([+\-*/^()0-9\s]*)([^0-9/*()^+-]*)/,
-    dateRegex : /\s*\d{1,2}\s*\|\s*\d{1,2}\s*\|\s*\d{1,4}\s*/,
+    mathExprRegex : /([^0-9/*()^+-]*)(?=(?:\D*\d){2})([+\-*/^()0-9\s]*)([^0-9/*()^+-]*)/,
+    dateRegex : /(\s*\d{1,2}\s*\|\s*\d{1,2}\s*\|\s*\d{1,4}\s*)/,
     addRegex : /(tambah\s*pertanyaan)\s*(.*?)\s*dengan\s*jawaban\s*(.*)/,
     delRegex : /(hapus\s*pertanyaan)\s*(.*)/
 }
@@ -60,9 +60,6 @@ function findPattern(question) { // mencari pattern yang cocok untuk pertanyaan
     } else if (isItMath(question)) {
         return [removeUselessSpaces(question.replace(question.match(regex.mathExprRegex)[2], " {math} ")), pattern.MATH, question.match(regex.mathExprRegex)[2]];
     } else if (isItAdd(question)) {
-        for (let i = 0; i < question.match(regex.addRegex).length; i++) {
-            console.log(question.match(regex.addRegex)[i]);
-        }
         let addelements = question.match(regex.addRegex)[0].split(/\sdengan\s(.*)/s).map((element) => removeUselessSpaces(element));
         let pElements = addelements[0].split(" ").map((element) => element.trim());
         let jElements = addelements[1].split(" ").map((element) => element.trim());
@@ -120,7 +117,7 @@ function isItUnknown(question) {
         ctr++;
     }
 
-    if (isItMath(question)) {
+    if (isItMath(question) && ctr != 1) {
         ctr++;
     }
 
@@ -419,6 +416,8 @@ async function generateResponse(question, data, idx) {
         } else {
             solutions = solutions.concat("Tidak ada pertanyaan ", question[2], " di database");
         }
+    } else {
+        solutions = solutions.concat(data[idx][1]);
     }
     return solutions;
 }
