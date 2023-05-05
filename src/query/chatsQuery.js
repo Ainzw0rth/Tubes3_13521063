@@ -1,4 +1,5 @@
 const { MongoClient, ObjectId } = require('mongodb');
+const algo = require('../backend/Algorithm');
 
 // definisikan konfigurasi koneksi ke database
 const uri = 'mongodb+srv://13521063:ngechatgpt@chatbot.ynjyvpn.mongodb.net/chatbotweb';
@@ -73,6 +74,19 @@ async function deleteChatById(id) {
   return result;
 };
 
+async function giveRespond(question) {
+  const client = new MongoClient(uri, { useUnifiedTopology: true });
+  await client.connect();
+  const db = client.db(dbName);
+  const collection = db.collection('chats');
+  const respond = algo.findResponses(question);
+
+  const newRespond = new Chat({
+    message: respond,
+    is_bot_message: true
+  })
+};
+
 // ekspor semua fungsi yang telah dibuat
 module.exports = {
   getChats,
@@ -81,5 +95,6 @@ module.exports = {
   getUserMessages,
   getBotMessages,
   addChat,
-  deleteChatById
+  deleteChatById,
+  giveRespond
 };

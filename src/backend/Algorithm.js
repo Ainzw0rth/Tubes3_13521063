@@ -13,10 +13,10 @@ const pattern = {
 }
 
 const regex = {
-    mathExprRegex : /^(\d+|\([^\(\)]*\))(?:\s*[+\-*/]+\s*(\d+|\([^\(\)]*\))|\s*[+\-*/]\s*[+\-*/]+?\s*(\d+|\([^\(\)]*\)))*$/,
-    dateRegex : /^(0?[1-9]|[12][0-9]|3[01])\|(0?[1-9]|1[012])\|\d{4}$/,
-    addRegex : /(.*tambah\s*pertanyaan)\s*(.*?)\s*dengan\s*jawaban\s*(.*)/i,
-    delRegex : /(.*hapus\s*pertanyaan)\s*(.*)/i
+    mathExprRegex : /([^0-9/*()^+-]*)(?=(?:\D*\d){2}(?:\D*[+\-*/^]){1})([+\-*/^()0-9\s]*)([^0-9/*()^+-]*)/, 
+    dateRegex : /\s*\d{1,2}\s*\|\s*\d{1,2}\s*\|\s*\d{1,4}\s*/,
+    addRegex : /(tambah\s*pertanyaan)\s*(.*?)\s*dengan\s*jawaban\s*(.*)/,
+    delRegex : /(hapus\s*pertanyaan)\s*(.*)/
 }
 
 function standarizeQuestions(input) { // standarisasi input
@@ -25,7 +25,7 @@ function standarizeQuestions(input) { // standarisasi input
     input = input.toLowerCase();
 
     // hapus space berlebihan di input
-    input = input.replace(/\s+/g, ' ');
+    input = removeUselessSpaces(input);
 
     // ganti tanda-tanda spesial
     input = input.replace(/[^+*/\-'^()"?|\w\s]|_/g, ""); // tanda-tanda yang diperbolehkan: +, -, /, *, ^, ', ", ?, |
@@ -34,7 +34,7 @@ function standarizeQuestions(input) { // standarisasi input
     let listOfQuestions = [];
 
     /* PISAHKAN PERTANYAAN */
-    const arrayOfQuestions = input.split("?").map((element) => element.trim()); // daftar pertanyaan
+    const arrayOfQuestions = input.split("?").map((element) => removeUselessSpaces(element)); // daftar pertanyaan
 
     // hapus pertanyaan kosong terakhir, karena pertanyaan dipisahkan dengan ?, maka pertanyaan seperti siapa presiden indonesia yang pertama? "akan di split menjadi siapa presiden indonesia yang pertama" dan ""
     if (arrayOfQuestions[arrayOfQuestions.length-1] == "" && arrayOfQuestions.length != 1) {
@@ -48,15 +48,22 @@ function standarizeQuestions(input) { // standarisasi input
     return listOfQuestions;
 }
 
+function removeUselessSpaces(input) {
+    return input.trim().replace(/\s+/g, ' ');
+}
+
 function findPattern(question) { // mencari pattern yang cocok untuk pertanyaan
     if (isItUnknown(question)) {
-        return [question, pattern.UNKNOWN, null];
+        return [removeUselessSpaces(question), pattern.UNKNOWN, null];
     } else if (isItDate(question)) {
-        return [question.replace(regex.dateRegex, "{date}"), pattern.DATE, question.match(regex.dateRegex)[0]];
+        return [removeUselessSpaces(question.replace(regex.dateRegex, " {date} ")), pattern.DATE, question.match(regex.dateRegex)[0]];
     } else if (isItMath(question)) {
-        return [question.replace(regex.mathExprRegex, "{math}"), pattern.MATH, question.match(regex.mathExprRegex)[0]];
+        return [removeUselessSpaces(question.replace(question.match(regex.mathExprRegex)[2], " {math} ")), pattern.MATH, question.match(regex.mathExprRegex)[2]];
     } else if (isItAdd(question)) {
-        let addelements = question.match(regex.addRegex)[0].split(/\sdengan\s(.*)/s).map((element) => element.trim());
+        for (let i = 0; i < question.match(regex.addRegex).length; i++) {
+            console.log(question.match(regex.addRegex)[i]);
+        }
+        let addelements = question.match(regex.addRegex)[0].split(/\sdengan\s(.*)/s).map((element) => removeUselessSpaces(element));
         let pElements = addelements[0].split(" ").map((element) => element.trim());
         let jElements = addelements[1].split(" ").map((element) => element.trim());
 
@@ -80,14 +87,14 @@ function findPattern(question) { // mencari pattern yang cocok untuk pertanyaan
             }
         }
 
-        return [question.replace(regex.addRegex, "{add}"), pattern.ADD, [pertanyaan.replace(/\s+/g, ' '), jawaban.replace(/\s+/g, ' ')]];
-    } else {
+        return [removeUselessSpaces(question.replace(regex.addRegex, " {add} ")), pattern.ADD, [removeUselessSpaces(pertanyaan), removeUselessSpaces(jawaban)]];
+    } else if (isItDelete(question)) {
         // handle jika terdapat input seperti "hapus pertanyaan apakah hapus pertanyaan termasuk perintah?"
         // batasan: seluruh string setelah hapus pertanyaan pertama adalah pertanyaan
         let delElements = question.match(regex.delRegex)[0].split(/hapus\spertanyaan\s(.*)/s);
         let pertanyaan = delElements[1];
 
-        return [question.replace(regex.delRegex, "{del}"), pattern.DEL, pertanyaan.replace(/\s+/g, ' ')];
+        return [removeUselessSpaces(question.replace(regex.delRegex, " {del} ")), pattern.DEL, removeUselessSpaces(pertanyaan)];
     }
 }
 
@@ -312,11 +319,10 @@ function getDayFromDate(datestring) {
 
 /* -------- FINDING PROPER RESPONSES SECTION -------- */
 // fungsi untuk mencari pertanyaan yang exact match menggunakan kmp/bm
-function findResponses(input, KMP) {
+async function findResponses(input, KMP) {
     // nanti masukin proses ngambil daftar pertanyaan dan response dari query terus masukin ke data
     /* INSERT HERE */
-    let data = knowQuery.getQuestionAndAnswer();
-    console.log(data);
+    let data = await knowQuery.getQuestionAndAnswer();
 
     const listOfQuestions = standarizeQuestions(input);
 
@@ -344,7 +350,7 @@ function findResponses(input, KMP) {
         }
     }
 
-    console.log(listOfResponses);
+    const result = listOfResponses.flat().join(' ');
 }
 
 // fungsi untuk mencari pertanyaan ketika tidak ada yang exact match
@@ -374,43 +380,41 @@ function findClosestSolution(question, data) {
 }
 
 // fungsi untuk melakukan kalkulasi untuk pertanyaan seperti kalkulator, tanggal, dll
-function generateResponse(question, data, idx) {
+async function generateResponse(question, data, idx) {
     let solutions = "";
     if (question[1] == pattern.MATH) {
         if (calculate(question[2]) == calculationError.mathError) {
             solutions = solutions.concat(calculationError.mathError);
         } else {
             solutions = solutions.concat(data[idx][1]);
-            solutions = solutions.concat(calculate(question[2]));
+            solutions = solutions.concat(" ", calculate(question[2]));
         }
     } else if (question[1] == pattern.DATE) {
         if (getDayFromDate(question[2]) == calculationError.dateError) {
             solutions = solutions.concat(calculationError.dateError);
         } else {
             solutions = solutions.concat(data[idx][1]);
-            solutions = solutions.concat(getDayFromDate(question[2]));
+            solutions = solutions.concat(" ", getDayFromDate(question[2]));
         }
     } else if (question[1] == pattern.ADD) {
         if (question[2][0].trim() == "" || question[2][1].trim() == "") {
             solutions = solutions.concat("pertanyaan atau jawaban tidak boleh kosong");
         } else if (knowQuery.isQuestionExist(question[2][0])) {
-            knowQuery.updateKnowledgeByQuestion(question[2][0], question[2][1]);
+            await knowQuery.updateKnowledgeByQuestion(question[2][0], question[2][1]);
             solutions = solutions.concat("pertanyaan ", question[2][0], " sudah ada! jawaban diupdate menjadi ", question[2][1]);
         } else {
             const newKnowledge = new Knowledge({
                 question: question[1],
                 answer: solutions
             });
-            knowQuery.addKnowledge(newKnowledge);
+            await knowQuery.addKnowledge(newKnowledge);
 
             solutions = solutions.concat("pertanyaan ", question[2][0], " telah ditambah");
         }
     } else if (question[1] == pattern.DEL) {
-        if (question[2].trim() == "") {
-            solutions = solutions.concat("pertanyaan tidak boleh kosong");
-        } else if (knowQuery.isQuestionExist(question[2])) {
-            knowQuery.deleteByQuestion(question[2]);
-            solutions = solutions.concat("pertanyaan ", question[2], " telah dihapus");
+        // // TODO: query delete dari database
+        if (knowQuery.isQuestionExist(question[1])) {
+            knowQuery.deleteByQuestion(question[1]);
         } else {
             solutions = solutions.concat("Tidak ada pertanyaan ", question[2], " di database");
         }
@@ -424,9 +428,9 @@ function generateResponse(question, data, idx) {
 
 
 
-
 module.exports = {
     standarizeQuestions,
+    removeUselessSpaces,
     findPattern,
     isItMath,
     isItDate,
@@ -446,4 +450,4 @@ module.exports = {
 
 /* TESTING PURPOSES */
 // let data = [["ques1", "solusi1"], ["ques2", "solusi2"], ["ques3", "solusi3"], ["{add}", ""], ["{date}", "hari "], ["{math}", "hasil "]];
-findResponses("hapus pertanyaan x?", true);
+// findResponses("hapus pertanyaan x?", true);
