@@ -13,7 +13,7 @@ const pattern = {
 }
 
 const regex = {
-    mathExprRegex : /([^0-9/*()^+-]*)(?=(?:\D*\d){2}(?:\D*[+\-*/^]){1})([+\-*/^()0-9\s]*)([^0-9/*()^+-]*)/, 
+    mathExprRegex : /([^0-9/*()^+-]*)(?=(?:\D*\d){2}(?:\D*[+\-*/^]){1})([+\-*/^()0-9\s]*)([^0-9/*()^+-]*)/,
     dateRegex : /\s*\d{1,2}\s*\|\s*\d{1,2}\s*\|\s*\d{1,4}\s*/,
     addRegex : /(tambah\s*pertanyaan)\s*(.*?)\s*dengan\s*jawaban\s*(.*)/,
     delRegex : /(hapus\s*pertanyaan)\s*(.*)/
@@ -400,13 +400,13 @@ async function generateResponse(question, data, idx) {
     } else if (question[1] == pattern.ADD) {
         if (question[2][0].trim() == "" || question[2][1].trim() == "") {
             solutions = solutions.concat("pertanyaan atau jawaban tidak boleh kosong");
-        } else if (knowQuery.isQuestionExist(question[2][0])) {
+        } else if (await knowQuery.isQuestionExist(question[2][0])) {
             await knowQuery.updateKnowledgeByQuestion(question[2][0], question[2][1]);
             solutions = solutions.concat("pertanyaan ", question[2][0], " sudah ada! jawaban diupdate menjadi ", question[2][1]);
         } else {
             const newKnowledge = new Knowledge({
-                question: question[1],
-                answer: solutions
+                question: question[2][0],
+                answer: question[2][1]
             });
             await knowQuery.addKnowledge(newKnowledge);
 
@@ -414,14 +414,11 @@ async function generateResponse(question, data, idx) {
         }
     } else if (question[1] == pattern.DEL) {
         // // TODO: query delete dari database
-        if (knowQuery.isQuestionExist(question[1])) {
-            knowQuery.deleteByQuestion(question[1]);
+        if (await knowQuery.isQuestionExist(question[2])) {
+            await knowQuery.deleteByQuestion(question[2]);
         } else {
             solutions = solutions.concat("Tidak ada pertanyaan ", question[2], " di database");
         }
-        solutions = 2; // sementara
-    } else {
-        solutions = solutions.concat(data[idx][1]);
     }
     return solutions;
 }
