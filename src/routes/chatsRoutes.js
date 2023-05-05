@@ -1,6 +1,6 @@
 const express = require('express');
 const Chat = require('../models/chats');
-const { getChats, getChatById, getChatByMsg, getUserMessages, getBotMessages, addChat, deleteChatById } = require('../query/chatsQuery');
+const { getChats, getChatById, addChat, deleteChatById, giveRespond } = require('../query/chatsQuery');
 const router = express.Router();
 
 // GET all chats
@@ -21,27 +21,6 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Cannot find chat' });
     }
     res.json(chat);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-// GET all user messages
-router.get('/:user-message', async (req, res) => {
-  try {
-    const chats = await getUserMessages();
-    res.json(chats);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-// GET all bot messages
-router.get('/:bot-message', async (req, res) => {
-  try {
-    const chats = await getBotMessages();
-    console.log(chats);
-    res.json(chats);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -75,14 +54,26 @@ router.delete('/:id', async (req, res) => {
 });
 
 // POST a new chat and get response from bot
-// router.post('/', async (req, res) => {
-//   try {
-//     const question = req.body.question;
-//     const response = await giveRespond(question);
-//     res.status(200).json(response);
-//   } catch (err) {
-//     res.status(500).json({ message: err.message });
-//   }
-// });
+router.post('/answer', async (req, res) => {
+  try {
+    const response = await giveRespond(req.body.message);
+
+    const newChat = new Chat({
+      message: req.body.message,
+      is_bot_message: false
+    });
+    await addChat(newChat);
+
+    const botResponse = new Chat({
+      message: response,
+      is_bot_message: true
+    });
+    await addChat(botResponse);
+
+    res.status(200).json(response);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
 module.exports = router;

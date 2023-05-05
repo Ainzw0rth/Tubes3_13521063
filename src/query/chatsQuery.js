@@ -22,20 +22,9 @@ async function getChatById(id) {
   await client.connect();
   const db = client.db(dbName);
   const collection = db.collection('chats');
-  const chat = await collection.findOne({ _id: ObjectId(id) });
+  const chat = await collection.findOne({ _id: new ObjectId(id) });
   await client.close();
   return chat;
-};
-
-// buat fungsi untuk mendapatkan data chat berdasarkan pertanyaan
-async function getChatByMsg(msg) {
-    const client = new MongoClient(uri, { useUnifiedTopology: true });
-    await client.connect();
-    const db = client.db(dbName);
-    const collection = db.collection('chats');
-    const chat = await collection.findOne({ message: msg });
-    await client.close();
-    return chat;
 };
 
 // Mendapatkan semua chat yang bukan merupakan bot message
@@ -69,7 +58,7 @@ async function deleteChatById(id) {
   await client.connect();
   const db = client.db(dbName);
   const collection = db.collection('chats');
-  const result = await collection.deleteOne({ _id: ObjectId(id) });
+  const result = await collection.deleteOne({ _id: new ObjectId(id) });
   await client.close();
   return result;
 };
@@ -79,19 +68,15 @@ async function giveRespond(question) {
   await client.connect();
   const db = client.db(dbName);
   const collection = db.collection('chats');
-  const respond = algo.findResponses(question);
-
-  const newRespond = new Chat({
-    message: respond,
-    is_bot_message: true
-  })
+  const respond = await algo.findResponses(question);
+  await client.close();
+  return respond;
 };
 
 // ekspor semua fungsi yang telah dibuat
 module.exports = {
   getChats,
   getChatById,
-  getChatByMsg,
   getUserMessages,
   getBotMessages,
   addChat,
