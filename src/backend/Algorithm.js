@@ -289,7 +289,7 @@ async function findResponses(input, KMP) {
     let data = await knowQuery.getQuestionAndAnswer();
 
     const listOfQuestions = standarizeQuestions(input);
-    console.log("pertanyaan", listOfQuestions);
+    // console.log("pertanyaan", listOfQuestions);
 
     let listOfResponses = [];
 
@@ -316,6 +316,7 @@ async function findResponses(input, KMP) {
     }
 
     const result = listOfResponses.flat().join(' ');
+    return result;
 }
 
 // fungsi untuk mencari pertanyaan ketika tidak ada yang exact match
