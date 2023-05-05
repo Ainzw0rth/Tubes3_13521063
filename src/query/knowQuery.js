@@ -57,7 +57,7 @@ async function deleteKnowledgeById(id) {
 
 async function deleteByQuestion(question) {
     try {
-      const result = await Knowledge.deleteOne({ question });
+      const result = await Knowledge.deleteOne({ question: question });
       console.log(`Deleted ${result.deletedCount} knowledge(s) with question "${question}"`);
       return result.deletedCount;
     } catch (error) {
